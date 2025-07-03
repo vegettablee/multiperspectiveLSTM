@@ -23,26 +23,33 @@ num_layers = 2
 
 vocab_size = 30522
 
-decoder = decoder_model.MultiPerspectiveNN(input_dim, hidden_size, num_layers)
-
 loss_function = nn.CrossEntropyLoss()
-# compares the correct token with the predicted token
-# turns the raw hidden state into a logits for each token, hence the size of the input(BERT embeddings) and the output(vocab size)
 
-lstm = nn.LSTM(input_dim, hidden_size, num_layers, bias=True)
-# LSTM used to generate text based on the output length inside of the training data
+def initializeModel(): # for creating a fresh model to train from scratch
+  decoder = decoder_model.MultiPerspectiveNN(input_dim, hidden_size, num_layers)
+  return decoder
 
-inputs = tokenizer("Hello, my dog is cute", return_tensors="pt") 
+
+def train(model, sentences): #
+  inputs = tokenizer(sentence, return_tensors="pt") 
 # using a pre-trained tokenizer because this reduces the stress of creating my own tokenizer and vocabulary 
-
-outputs = bert_model(**inputs) 
+  outputs = bert_model(**inputs) 
 # running the inputs through the model
-
-hidden_embeddings = outputs.last_hidden_state 
+  hidden_embeddings = outputs.last_hidden_state 
 # gets the last hidden state, which will be used as input for the decoder for text generation
+  seq_len = len(sentence)
+  outputs, (H,C), sentence = model(hidden_embeddings, input_dim, seq_len, H_C=None)
+  return outputs, (H,C), sentence
 
-outputs, (H,C), sentence = decoder(hidden_embeddings, input_dim, 10, H_C=None)
 
-for word in sentence:
-  print(word)
+def saveModel(): # this gets modified later
+  PATH = "model_state_dict.pth"
+  torch.save(decoder.state_dict(), PATH)
+
+def load_model():
+  torch.load
+
+
+# for word in sentence:
+  # print(word)
 # hidden states that will be used to evaluate prediction accuracy 

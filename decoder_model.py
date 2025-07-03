@@ -13,8 +13,6 @@ from sklearn.metrics import accuracy_score
 from tqdm import tqdm
 
 
-
-
 class MultiPerspectiveNN(nn.Module):
   def __init__(self, input_size, hidden_size, num_layers):
     super().__init__()
@@ -31,6 +29,7 @@ class MultiPerspectiveNN(nn.Module):
     layer = self.linear_layer(hidden_state)
     softmax = nn.Softmax(dim=-1)
     predicted_word = softmax(layer)
+    print("generated token : " + str(predicted_word))
     return predicted_word
   
   def forward(self, inputs, input_size, seq_len, H_C): # this is going to be a trained decoder
@@ -39,12 +38,14 @@ class MultiPerspectiveNN(nn.Module):
     # use this hidden state, and given a correct_text, generate text with until it hits the same length
     # at each iteration or word being generated, use the current hidden state to generate the next predicted word 
     # loss gets evaluated at the end of the entire sentence, and this model only returns the predicted words with the specified length
-
-  
+    
+    if H_C == None: # no previous hidden memory 
+      H = torch.zeros(self.num_layers, batch_size, self.hidden_size, device=inputs.device)
+      C = torch.zeros(self.num_layers, batch_size, self.hidden_size, device=inputs.device)
+    else : 
+      (H,C) = H_C
+    
     batch_size = inputs.size(0) # this is always 1
-    H = torch.zeros(self.num_layers, batch_size, self.hidden_size, device=inputs.device)
-    C = torch.zeros(self.num_layers, batch_size, self.hidden_size, device=inputs.device)
-
     outputs = []
     # outputs is the array of all hidden states
     sentences = []
@@ -56,8 +57,3 @@ class MultiPerspectiveNN(nn.Module):
         predicted_word = self.generateToken(H)
         sentences.append(predicted_word)    
     return outputs, (H,C), sentences
-  
-
-  
-  
-  
