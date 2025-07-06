@@ -10,3 +10,5 @@ bert_model = BertModel.from_pretrained(
     trust_remote_code=False,
     use_safetensors=False  # this is the critical flag
 )
+
+# had an issue with circular imports, so i could put everything into a separate file 

@@ -1,7 +1,0 @@
-pandas>=2.0.0
-numpy>=1.21.0
-tokenizers>=0.21.0
-transformers>=4.52.0
-torch>=2.0.0
-datasets>=2.0.0  # often useful for NLP work
-accelerate>=0.20.0  # for faster training

@@ -32,6 +32,8 @@ def saveModel(): # this gets modified later
 def load_model():
   torch.load
 
+seq_len = 10
+
 model = decoder_model.MultiPerspectiveNN(input_dim, hidden_size, num_layers)
 
 inputs = tokenizer.tokenizer("The cat ran across the street.", return_tensors="pt") 
@@ -39,7 +41,9 @@ inputs = tokenizer.tokenizer("The cat ran across the street.", return_tensors="p
 
 encoding = tokenizer.bert_model(**inputs)
 
-hidden_embeddings = encoding.last_hidden_state # gets the last hidden state at each iteration for the predicted token 
+cls_token = encoding.last_hidden_state[:, 0, :]
+# gets the cls token which holds the input representation of the entire sequence into one vector 
+
 # iterating through the separate perspectives/outputs for the same input 
-outputs, (H,C), predicted = model(hidden_embeddings, input_dim, 10, H_C=None)
+outputs, (H,C), predicted = model(cls_token, seq_len, H_C=None)
 
