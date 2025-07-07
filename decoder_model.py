@@ -23,7 +23,6 @@ class MultiPerspectiveNN(nn.Module):
     vocab_size = 30522
     self.linear_layer = nn.Linear(hidden_size, vocab_size)
     
-
     bert_embeddings = tokenizer.bert_model.embeddings.word_embeddings
 
     embedding_dim = 768
@@ -49,14 +48,13 @@ class MultiPerspectiveNN(nn.Module):
     logits = self.linear_layer(hidden_state)
 
     token_probs = nn.Softmax(dim=-1)(logits)
-    index = torch.argmax(token_probs, dim=-1)  # Fixed: added dim=-1
+    index = torch.argmax(token_probs, dim=-1) 
 
-    # Decode using your tokenizer module (fixed: added .item())
     predicted_word = tokenizer.tokenizer.decode(index.item())
     print("generated token : " + predicted_word)
     return predicted_word, index
   
-  def forward(self, cls_token, seq_len, H_C=None): # this is going to be a trained decoder
+  def forward(self, cls_token, seq_len, first_token, H_C=None): # this is going to be a trained decoder
 
     # the forward function here serves to take the last hidden state from the BERT encoder, specifically the CLS token
     # use this hidden state, and given a correct_text, generate text with until it hits the same length
@@ -83,10 +81,10 @@ class MultiPerspectiveNN(nn.Module):
     outputs = []
     # outputs is the array of all hidden states throughout
     
-    first_word = "I" 
-    first_id = tokenizer.tokenizer(first_word, return_tensors="pt")['input_ids']
-    inputs = self.embedding_layer(first_id) # one dimensional vector of size 768, shape (1, 1, 768)
-
+    first_word = tokenizer.tokenizer.decode(first_token)
+    converted_token = torch.tensor([first_token])
+    inputs = self.embedding_layer(converted_token) # one dimensional vector of size 768, shape (1, 768)
+    inputs = inputs.unsqueeze(0) # to fix shape into (1, 1, 768)
     sentences.append(first_word)
     print("First input token: " + first_word) 
 

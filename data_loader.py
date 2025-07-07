@@ -32,4 +32,4 @@ def fetchData(batch_size):
 
   return batches
 
-fetchData(10)
+# fetchData(10), for testing
