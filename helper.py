@@ -4,14 +4,6 @@ import torch.nn as nn
 import tokenizer
 import decoder_model
 
-model_dir = "/Users/prestonrank/LSTM_multi_perspective/bert-base-uncased"
-
-input_dim = 768
-hidden_size = 768
-num_layers = 2
-
-vocab_size = 30522
-
 loss_function = nn.CrossEntropyLoss()
 
 def computeLoss(model, outputs, correct_ids):
@@ -30,19 +22,6 @@ def computeLoss(model, outputs, correct_ids):
     losses.append(loss) 
 
   return sum(losses) 
-
-def initializeModel(): # for creating a fresh model to train from scratch
-  decoder = decoder_model.MultiPerspectiveNN(input_dim, hidden_size, num_layers)
-  return decoder
-
-
-def saveModel(): # this gets modified later
-  PATH = "model_state_dict.pth"
-  torch.save(decoder.state_dict(), PATH)
-
-
-def load_model():
-  torch.load
 
 # seq_len = 10
 
