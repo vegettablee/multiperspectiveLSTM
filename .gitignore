@@ -1,3 +1,4 @@
 /bert-base-uncased
 /model_data
-data.json 
+/runs
+tensor_script.py

@@ -87,12 +87,13 @@ class MultiPerspectiveNN(nn.Module):
     inputs = inputs.unsqueeze(0) # to fix shape into (1, 1, 768)
     sentences.append(first_word)
     print("First input token: " + first_word) 
-
+    predicted_ids = []
     for i in range(seq_len):
         # lstm takes in (seq, features) 
         output, (H, C) = self.lstm(inputs, (H, C))
         # pass in the hidden and cell state through the LSTM recursively
         predicted_word, index = self.generateToken(H)
+        predicted_ids.append(index)
         # get predicted_word 
         input_id = tokenizer.tokenizer(predicted_word, return_tensors="pt")['input_ids'] # tokenizer returns shape (1, 1)
         # tokenize the predicted word
@@ -100,7 +101,7 @@ class MultiPerspectiveNN(nn.Module):
         sentences.append(predicted_word)    
         outputs.append(H)
         
-    return outputs, (H,C), sentences
+    return outputs, (H,C), sentences, predicted_ids
   
 
   # there are two main approaches I want to try, this is for remembering later, the first one is :

@@ -51,20 +51,44 @@ def save_checkpoint(model, optimizer, epoch, batch_idx, filepath=f"{FOLDER_PATH}
         'optimizer_state_dict': optimizer.state_dict()
       #  'loss': loss, removed this for now, could add later for more functionality
     }
+    # saveModel(model)
+   # save_optimizer(optimizer)
     torch.save(checkpoint, filepath)
     print(f"Saved checkpoint at epoch {epoch}, batch {batch_idx}")
 
-def load_checkpoint(model, optimizer, filepath=f"{FOLDER_PATH}checkpoint.pth"):
-    """Load complete training checkpoint, returning resume indices"""
-    checkpoint = torch.load(filepath, map_location=device)
+def load_model_checkpoint(filename='checkpoint.pth'):
+    """
+    Load a full checkpoint without passing in model/optimizer.
+    Returns (model, optimizer, start_epoch, start_batch_idx).
+    """
+    path = os.path.join(FOLDER_PATH, filename)
+    checkpoint = torch.load(path, map_location=device)
+
+    # instantiate fresh model & optimizer
+    model = initializeModel()
+    optimizer = initializeOptimizer(model)
+
+    # load state dicts
     model.load_state_dict(checkpoint['model_state_dict'])
     optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
     model = model.to(device)
-    epoch = checkpoint.get('epoch', 0)
-    batch_idx = checkpoint.get('batch_idx', 0)
-    # loss = checkpoint.get('loss', None), can be added later
-    print(f"Loaded checkpoint from epoch {epoch}, batch {batch_idx}")
-    return model, optimizer, epoch, batch_idx # loss
+
+    # retrieve resume indices
+    start_epoch = checkpoint.get('epoch', 0)
+    start_batch = checkpoint.get('batch_idx', 0)
+    print(f"Loaded checkpoint from epoch {start_epoch}, batch {start_batch}")
+    return model, optimizer, start_epoch, start_batch
+
+def clear_checkpoints(checkpoint_file='checkpoint.pth', lstm_file='lstm_cell_state.pth'):
+    """Remove saved checkpoint and LSTM cell state files if they exist"""
+    for filename in (checkpoint_file, lstm_file):
+        path = os.path.join(FOLDER_PATH, filename)
+        if os.path.exists(path):
+            os.remove(path)
+            print(f"Deleted {path}")
+        else:
+            print(f"No file to delete at {path}")
+
 
 def save_lstm_cell_state(cell_state, filepath=f"{FOLDER_PATH}lstm_cell_state.pth"):
     """Save LSTM cell state (c_t) only"""

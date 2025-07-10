@@ -2,7 +2,6 @@ import json
 
 file_name = "data.json"
 
-
 def readFile():
   with open(file_name, 'r') as f:
     data = json.load(f)
@@ -21,7 +20,7 @@ def fetchData(batch_size):
     perspectives = entry['Perspectives']
     outputs = entry['Output']
     item = (input, perspectives, outputs) # splits each data into a tuple and appends it to a mini-batch
-    print("Batch number : " + str(len(batches) + 1) + "Item added to batch : " + str(item))
+   # print("Batch number : " + str(len(batches) + 1) + "Item added to batch : " + str(item))
     batch.append(item)
     counter += 1
 
