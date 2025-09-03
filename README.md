@@ -1,28 +1,26 @@
-To run this code, since I had issues regarding importing the BERT model, I downloaded the model and imported it. Everything needed is inside of the tokenizer.py file.
+## Overview
+This project takes a sentence like "The cat ate the pizza on the table" and generates a new sentence from a specified perspective (e.g., "Cat") to produce output like "The pizza was delicious."
 
-At a high level, this code is taking a sentence like "The cat ate the pizza on the table." And then, given a perspective like "Cat", generate a sentence based on the perspective, something like 
-"The pizza was delicious."
+## Architecture
+Sentence → BERT Tokens/Embeddings → [CLS] Token Extraction → LSTM Hidden State → Token Generation
+The system uses a BERT → LSTM sequence-to-sequence architecture for perspective-based text generation. I extract the [CLS] token as input to the LSTM's hidden state, then generate tokens based on the hidden state at each iteration in the sequence.
 
-Sentence -> Decoding into BERT Tokens/Embeddings -> Extracting [CLS] token as input to LSTM's hidden state -> Based on the hidden state at each iteration in the sequence length -> Generate token
+## Dataset Format
+Sentence: "The cat ate the pizza on the table."
+Perspective: [Cat] 
+CorrectOutput: "The pizza was delicious."
 
-Dataset is made in the form of : 
-Sentence : "The cat ate the pizza on the table." 
-Perspective : [Cat] 
-CorrectOutput : "The pizza was delicious." 
+## Technical Implementation
+BERT Integration: Downloaded the model locally to handle import issues - everything needed is in tokenizer.py
+LSTM Generation: Experimenting with autoregressive generation strategies (teacher forcing) and different attention mechanisms for decoding
+Modern NLP Workflow: Combining transformer embeddings with recurrent models for structured text generation
 
-Approaches I've tried : 
-- I attempted to project the [CLS] token onto each input of the LSTM, my reasoning for this, was that adding the [CLS] token would almost be hydrating the model at each iteration, so it would be
-- able to maintain the context of the original sentence even at the last generated token. However, this didn't work because the model kept converging to the same [SEP] token, likely because
-- the [CLS] token wasn't meaningfully getting extracted.
+## Current Research Approaches
+I'm exploring attention mechanisms where the [CLS] token can learn over time what parts are useful for generating tokens, rather than directly projecting it onto each LSTM input. This should prevent the model from converging to repetitive [SEP] tokens.
+Also investigating teacher forcing with attention over previously generated tokens, which should yield better results but requires significant code restructuring.
 
-- Feeding in the first token as the first input into the LSTM, I wanted to see if the model, given the correct first token, generate other tokens based on this, and be trainable.
-- However, this did not work, because this input got lost after two or three passes in the same sentence. It had generated something like "I don't don't don't [SEP] [SEP]....".
+## Technologies
+Python, PyTorch, BERT, LSTM, Transformers
 
-Approaches to try : 
-- Using the [CLS] token, but instead of using it as input, add an attention layer so whenever this is used as input, the model can learn over time what part's of the
--  [CLS] token are useful for generating tokens.
-
-- Teacher forcing, feeding the model the correct token and using attention for all of the previously generated tokens to generate the next token. This I need to try because I believe it will yield the
-- best results, however, it is hard to implement because I would have to change a lot of my code.
-
-
+## Setup
+All dependencies and the BERT model are included. Run the main script after ensuring tokenizer.py is in the same directory.
