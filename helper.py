@@ -6,20 +6,23 @@ import decoder_model
 
 loss_function = nn.CrossEntropyLoss()
 
-def computeLoss(model, outputs, correct_ids):
+def computeLoss(model, outputs, correct_ids, attention_contexts):
 
   losses = []
-  
-  for index, hidden_state in enumerate(outputs): 
-    target_token_id = correct_ids[index]  # get correct token id 
+
+  for index, (hidden_state, attention_context) in enumerate(zip(outputs, attention_contexts)):
+    target_token_id = correct_ids[index]  # get correct token id
     target_tensor = torch.tensor([target_token_id])
 
-    hidden_state = hidden_state[-1, 0, :]
-    logits = model.linear_layer(hidden_state.unsqueeze(0)) # turns shape into (1, 768)
-    # hidden_state has shape (N,L, hidden_out), needs to be transformed into (1, hidden_out)
+    hidden_state = hidden_state[-1, 0, :]  # (hidden_size,)
+    attention_context = attention_context.squeeze(0) if attention_context.dim() > 1 else attention_context  # (input_size,)
 
-    loss = loss_function(logits, target_tensor) # compute the loss 
-    losses.append(loss) 
+    # Concatenate hidden state with attention context (same as in generateToken)
+    combined_features = torch.cat([hidden_state, attention_context], dim=-1)
+    logits = model.linear_layer(combined_features.unsqueeze(0)) # (1, vocab_size)
+
+    loss = loss_function(logits, target_tensor) # compute the loss
+    losses.append(loss)
 
   return sum(losses) 
 

@@ -100,14 +100,3 @@ def load_lstm_cell_state(filepath=f"{FOLDER_PATH}lstm_cell_state.pth"):
     cell_state = torch.load(filepath, map_location=device)
     print(f"Loaded LSTM cell state from {filepath}")
     return cell_state
-
-# Example usage:
-if __name__ == "__main__":
-    # Initialize or load as needed
-    model = initializeModel()
-    optimizer = initializeOptimizer(model)
-    # To resume:
-    # model, optimizer, start_epoch, start_batch, _ = load_checkpoint(model, optimizer)
-    print(f"Model is on device: {next(model.parameters()).device}")
-    print(f"CUDA available: {torch.cuda.is_available()}")
-    print(f"Saving to folder: {FOLDER_PATH}")

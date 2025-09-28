@@ -2,3 +2,4 @@
 /model_data
 /runs
 tensor_script.py
+__pycache__
