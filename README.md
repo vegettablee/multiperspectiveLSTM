@@ -2,7 +2,7 @@
 
 A neural text generation system that combines BERT contextual encoding with LSTM decoding to generate text from multiple perspectives. The model uses attention mechanisms and teacher forcing for improved learning.
 
-## 🎯 Project Overview
+## Project Overview
 
 This project implements a novel architecture that:
 - Takes an input sentence and a "perspective" prompt
@@ -10,7 +10,7 @@ This project implements a novel architecture that:
 - Employs an LSTM decoder with attention to generate relevant text
 - Learns to extract different aspects of information based on the given perspective
 
-## 🏗️ Architecture
+## Architecture
 
 ### Core Components
 
@@ -36,7 +36,7 @@ This project implements a novel architecture that:
 - TensorBoard integration for loss/accuracy tracking
 - Checkpoint saving for training resumption
 
-## 🔧 Key Features
+## Key Features
 
 ### Teacher Forcing
 - Always feeds correct previous tokens (not predictions) during training
@@ -59,7 +59,7 @@ This project implements a novel architecture that:
 - Token distribution analysis to detect convergence issues
 - Hidden state statistics for debugging training dynamics
 
-## 📊 Training Metrics
+## Training Metrics
 
 The system tracks:
 - **Loss**: CrossEntropyLoss across all generated tokens
@@ -68,7 +68,7 @@ The system tracks:
 - **Attention Patterns**: Entropy and weight distribution
 - **Gradient Health**: Norm monitoring and clipping effectiveness
 
-## 🔍 Debugging Features
+## Debugging Features
 
 ### Attention Analysis
 - Entropy measurement (higher = more diverse attention)
@@ -85,7 +85,7 @@ The system tracks:
 - Diversity warnings for convergence issues
 - Top-N most frequent predictions
 
-## 🚀 Usage
+## Usage
 
 ```bash
 # Start training (configured in training_loop.py)
@@ -95,7 +95,7 @@ python training_loop.py
 tensorboard --logdir runs/exp_loss_tracking
 ```
 
-## 🛠️ Technical Implementation
+## Technical Implementation
 
 ### Data Flow
 1. Input: `(sentence, perspective, correct_output)` tuples
@@ -115,21 +115,3 @@ tensorboard --logdir runs/exp_loss_tracking
 - **Attention**: Multi-head style with Q-K-V projections
 - **Output**: 30,522 vocabulary predictions (BERT vocab)
 
-## 📈 Expected Applications
-
-This architecture could be applied to:
-- **Document Summarization**: Different perspective summaries
-- **Question Answering**: Perspective-guided answer generation
-- **Content Creation**: Generate text from specific viewpoints
-- **Information Extraction**: Extract different aspects from text
-
-## 🔬 Research Contributions
-
-- Novel combination of BERT encoding with LSTM decoding
-- Attention mechanism over teacher-forced token history
-- Comprehensive debugging framework for neural text generation
-- Gradient stability techniques for training large vocabulary models
-
----
-
-*This project demonstrates advanced NLP techniques including transformer integration, attention mechanisms, teacher forcing, and production-ready training practices with extensive monitoring and debugging capabilities.*
